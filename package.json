@@ -1,0 +1,14 @@
+{
+  "name": "web_spotify_connect",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "server.js",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "request": "^2.88.2"
+  }
+}
