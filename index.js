@@ -1,4 +1,35 @@
+var tokenReceived = false;
+var token = "";
+
 window.onSpotifyWebPlaybackSDKReady = () => {
+
+  var socket = new WebSocket('ws://localhost:555/');
+  socket.onopen = function () {
+      console.log('Connected!');
+      socket.send('token');
+  };
+  socket.onmessage = function (event) {
+      console.log('Received data: ' + event.data);
+      try {
+        if(JSON.parse(event.data).access_token != null) {
+          access_token = JSON.parse(event.data).access_token;
+          tokenReceived = true;
+          socket.send('token received !');
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+
+      }
+
+  };
+  socket.onclose = function () {
+      console.log('Lost connection!');
+  };
+  socket.onerror = function () {
+      console.log('Error!');
+  };
+
 
   const player = new Spotify.Player({
     name: 'Web Playback SDK',

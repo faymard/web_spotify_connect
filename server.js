@@ -3,8 +3,38 @@ var http = require('http');
 var fs = require('fs');
 const request = require('request');
 var url = require('url');
+const WebSocket = require('ws');
+
+const wss = new WebSocket.Server({ port: 555 });
+
+var accessToken = "";
+var tokenReceived = true;
+var tokenRequested = false;
+
+wss.on('connection', function connection(wsi) {
+  console.log("clients : " + wss.clients.size);
+  wsi.on('message', function incoming(data) {
+    console.log(data);
+    wss.clients.forEach(function each(client) {
+      if(data === "token" && tokenReceived) {
+        tokenRequested = true;
+      }
+      else if (client !== ws && client !== wsi && client.readyState === WebSocket.OPEN && tokenRequested) {
+          client.send(accessToken);
+          console.log("token sent");
+          tokenRequested = false;
+      }
+    });
+  });
+});
+
+const ws = new WebSocket("ws://localhost:555");
 
 var  cred;
+fs.readFile("credentials.json", function(error, content) {
+  cred = JSON.parse(content);
+  return 0;
+});
 //2.
 var server = http.createServer(function (req, resp) {
     //3.
@@ -24,15 +54,43 @@ var server = http.createServer(function (req, resp) {
       }
     );
 
-    if(url_parts.searchParams.has('code')) {
-      var code = url_parts.searchParams.get('code');
+  }
 
+    else if (url_parts.pathname === "/spotify/connect") {
+        fs.readFile("credentials.json", function(error, content) {
+        cred = JSON.parse(content);
+        if (error) {
+            console.log("error reading credentials");
+        } else {
+          resp.writeHead(302, {
+            "Location": "https://accounts.spotify.com/authorize/?client_id=" + cred.client_id
+                                  + "&redirect_uri=" + "http://localhost/spotify/callback" + "&response_type=code"
+            //add other headers here...
+          });
+          resp.end();
+
+        }
+      });
+    }
+
+    else if (url_parts.pathname === "/spotify/callback") {
+      var code = url_parts.searchParams.get('code');
+      var query = new url.URL('https://accounts.spotify.com/api/token');
+      var body_for_ws = "";
+      query.searchParams.append('code', code);
+      query.searchParams.append('client_id', cred.client_id);
+      query.searchParams.append('client_secret', cred.client_secret);
+      query.searchParams.append('redirect_uri', "http://localhost/spotify/callback");
+      query.searchParams.append('grant_type', "authorization_code");
       request.post({url: "https://accounts.spotify.com/api/token",
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
         form : {
           code:code,
           client_id:cred.client_id,
           client_secret:cred.client_secret,
-          redirect_uri:'http://localhost/spotify',
+          redirect_uri:"http://localhost/spotify/callback",
           grant_type:"authorization_code"
         }
       },
@@ -41,31 +99,17 @@ var server = http.createServer(function (req, resp) {
           console.error(error);
           return;
         }
-        console.log(`statusCode: ${res.statusCode}`);
-        console.log(body);
-
+        resp.writeHead(302, {
+          "Location": "http://localhost/spotify"
+          //add other headers here...
+        });
+        resp.end();
+        accessToken = body;
+        tokenReceived = true;
+        return 0;
       })
-    }
+        return 0;
 
-
-  }
-
-    else if (req.url === "/spotify/connect") {
-      fs.readFile("credentials.json", function(error, content) {
-        cred = JSON.parse(content);
-        if (error) {
-            console.log("error reading credentials");
-        } else {
-          resp.writeHead(302, {
-            "Location": "https://accounts.spotify.com/authorize/?client_id=" + cred.client_id
-                                  + "&redirect_uri=" + "http://localhost/spotify" + "&response_type=code"
-            //add other headers here...
-          });
-          resp.end();
-          console.log("ended 2");
-
-        }
-      });
     }
 
     else if(req.url.indexOf('.js') != -1) {
