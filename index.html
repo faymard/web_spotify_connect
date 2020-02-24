@@ -5,6 +5,7 @@
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   <script src="./index.js"></script>
   <title>Spotify Web Playback SDK Quick Start Tutorial</title>
@@ -24,7 +25,7 @@
         <button type="button" class="nav-item btn" id="playpause" width=30px>Play/pause</button>
       </li>
       <li class="nav-item">
-        <input type="range" class="nav-item custom-range w-100" />
+        <input type="range" class="nav-item custom-range w-100" id="volume" min=0 max=100 />
       </li>
 
     </ul>

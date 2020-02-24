@@ -52,6 +52,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   // Ready
   player.addListener('ready', ({ device_id }) => {
     console.log('Ready with Device ID', device_id);
+    player.setName("SpotiWeb");
   });
 
   // Not Ready
@@ -69,6 +70,11 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   // Play/pause button
   $(document).ready(function(){
   });
+
+  $( "#volume" ).on("change", function(event) {
+    player.setVolume(event.target.value/100.0);
+  });
+
   $("#playpause").click(function(){
     player.togglePlay().then(() => {
       var time = 0;
@@ -81,6 +87,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   $("#connect").click(function() {
     console.log("Requested connection");
   })
+
 
 
 };
