@@ -9,9 +9,8 @@ window.onSpotifyWebPlaybackSDKReady = () => {
       socket.send('token');
   };
   socket.onmessage = function (event) {
-      console.log('Received data: ' + event.data);
       try {
-        if(JSON.parse(event.data).access_token != null) {
+        if(JSON.parse(event.data).access_token !== undefined) {
           access_token = JSON.parse(event.data).access_token;
           tokenReceived = true;
           socket.send('token received !');
@@ -33,7 +32,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
   const player = new Spotify.Player({
     name: 'Web Playback SDK',
-    getOAuthToken: cb => { cb(token); }
+    getOAuthToken: cb => { cb(access_token); }
   });
 
   // Error handling
@@ -44,7 +43,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
   // Playback status updates
   player.addListener('player_state_changed', ({track_window, track_window: {current_track}}) => {
-    console.log(track_window);
 
     $("#artist").text(current_track.artists[0].name);
     $("#track").text(current_track.name);

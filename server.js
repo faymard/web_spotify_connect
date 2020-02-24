@@ -8,7 +8,7 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 555 });
 
 var accessToken = "";
-var tokenReceived = true;
+var tokenReceived = false;
 var tokenRequested = false;
 
 wss.on('connection', function connection(wsi) {
@@ -16,15 +16,12 @@ wss.on('connection', function connection(wsi) {
   wsi.on('message', function incoming(data) {
     console.log(data);
     wss.clients.forEach(function each(client) {
-      if(data === "token" && tokenReceived) {
-        tokenRequested = true;
-      }
-      else if (client !== ws && client !== wsi && client.readyState === WebSocket.OPEN && tokenRequested) {
-          client.send(accessToken);
-          console.log("token sent");
-          tokenRequested = false;
+      if(client === wsi && data === "token" && tokenReceived) {
+        console.log("request received");
+        client.send(accessToken);
       }
     });
+
   });
 });
 
@@ -65,6 +62,7 @@ var server = http.createServer(function (req, resp) {
           resp.writeHead(302, {
             "Location": "https://accounts.spotify.com/authorize/?client_id=" + cred.client_id
                                   + "&redirect_uri=" + "http://localhost/spotify/callback" + "&response_type=code"
+                                  + "&scope=" + encodeURIComponent("streaming user-read-email user-read-private")
             //add other headers here...
           });
           resp.end();
