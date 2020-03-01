@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+
+<meta charset="UTF-8">
+
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
@@ -12,20 +15,26 @@
 </head>
 <body>
   <button id="connect" type="button" onclick="window.location.href = 'spotify/connect';">Connect to Web API</button>
-  <h1>Spotify Web Playback SDK Quick Start Tutorial</h1>
-  <h2>Open your console log: <code>View > Developer > JavaScript Console</code></h2>
 
-  <p id="currentTrack">Current track : <b> <span id="artist">artist</span> </b> - <span id="track">track</span> </p>
-
+  <div class="row" id="currentTrack">
+    <div class="col-sm-6 d-flex justify-content-center align-items-center" id="div_artist_track" style=float:none;>
+      <span id="artist_track" class="text-center"> <b> <span id="artist">artist</span> </b> - <span id="track">track</span> </span>
+    </div>
+    <div class="col-sm-6 d-flex justify-content-center align-items-center" id="div_art">
+      <span id="art">
+        <img id="art_img" src="" alt="" width="100%">
+      </span>
+    </div>
+  </div>
 
 
   <nav class="navbar bg-dark navbar-dark fixed-bottom">
     <ul class="nav nav-fill">
-      <li class="nav-item">
-        <button type="button" class="nav-item btn" id="playpause" width=30px>Play/pause</button>
+      <li class="nav-item" width="30%">
+        <button type="button" class="nav-item btn" id="playpause">Play/pause</button>
       </li>
-      <li class="nav-item">
-        <input type="range" class="nav-item custom-range w-100" id="volume" min=0 max=100 />
+      <li class="nav-item" width="70%">
+        <input type="range" class="nav-item custom-range w-100" id="volume" min=0 max=100/>
       </li>
 
     </ul>

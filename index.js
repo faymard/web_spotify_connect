@@ -1,5 +1,17 @@
 var tokenReceived = false;
 var token = "";
+var xhr = new XMLHttpRequest();
+
+function changeAttributes(e) {
+  if (xhr.readyState == 4 && xhr.status == 200) {
+    var response = JSON.parse(xhr.responseText);
+    $("#art_img").attr('src', response.album.images[0].url);
+
+    console.log("artwork updated");
+  }
+}
+
+xhr.onreadystatechange = changeAttributes; // see player_state_changed listener
 
 window.onSpotifyWebPlaybackSDKReady = () => {
 
@@ -31,7 +43,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 
   const player = new Spotify.Player({
-    name: 'Web Playback SDK',
+    name: 'SpotiWeb',
     getOAuthToken: cb => { cb(access_token); }
   });
 
@@ -46,13 +58,17 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
     $("#artist").text(current_track.artists[0].name);
     $("#track").text(current_track.name);
+    xhr.open('GET', "https://api.spotify.com/v1/tracks/"+current_track.id, true);
+    xhr.setRequestHeader("Authorization", "Bearer "  + access_token);
+    xhr.send();
 
   });
+
+
 
   // Ready
   player.addListener('ready', ({ device_id }) => {
     console.log('Ready with Device ID', device_id);
-    player.setName("SpotiWeb");
   });
 
   // Not Ready
