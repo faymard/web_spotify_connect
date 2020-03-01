@@ -8,6 +8,7 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 555 });
 
 var accessToken = "";
+var refreshToken = "";
 var tokenReceived = false;
 var tokenRequested = false;
 
@@ -17,8 +18,11 @@ wss.on('connection', function connection(wsi) {
     console.log(data);
     wss.clients.forEach(function each(client) {
       if(client === wsi && data === "token" && tokenReceived) {
-        console.log("request received");
-        client.send(accessToken);
+        var ans = JSON.stringify({
+          access:accessToken,
+          refresh:refreshToken
+        });
+        client.send(ans);
       }
     });
 
@@ -102,7 +106,8 @@ var server = http.createServer(function (req, resp) {
           //add other headers here...
         });
         resp.end();
-        accessToken = body;
+        accessToken = JSON.parse(body).access_token;
+        refreshToken = JSON.parse(body).refresh_token;
         tokenReceived = true;
         return 0;
       })

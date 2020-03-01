@@ -1,6 +1,8 @@
 var tokenReceived = false;
-var token = "";
+var access_token = "";
+var refresh_token = "";
 var xhr = new XMLHttpRequest();
+var currentId = "";
 
 function changeAttributes(e) {
   if (xhr.readyState == 4 && xhr.status == 200) {
@@ -17,13 +19,13 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
   var socket = new WebSocket('ws://localhost:555/');
   socket.onopen = function () {
-      console.log('Connected!');
       socket.send('token');
   };
   socket.onmessage = function (event) {
       try {
-        if(JSON.parse(event.data).access_token !== undefined) {
-          access_token = JSON.parse(event.data).access_token;
+        if(JSON.parse(event.data).access !== undefined) {
+          access_token = JSON.parse(event.data).access;
+          refresh_token = JSON.parse(event.data).refresh;
           tokenReceived = true;
           socket.send('token received !');
         }
@@ -56,18 +58,21 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   // Playback status updates
   player.addListener('player_state_changed', ({track_window, track_window: {current_track}}) => {
 
-    $("#artist").text(current_track.artists[0].name);
-    $("#track").text(current_track.name);
-    xhr.open('GET', "https://api.spotify.com/v1/tracks/"+current_track.id, true);
-    xhr.setRequestHeader("Authorization", "Bearer "  + access_token);
-    xhr.send();
+    if(currentId !== current_track.id) {
+      currentId = current_track.id;
+      $("#artist").text(current_track.artists[0].name);
+      $("#track").text(current_track.name);
+      xhr.open('GET', "https://api.spotify.com/v1/tracks/"+currentId, true);
+      xhr.setRequestHeader("Authorization", "Bearer "  + access_token);
+      xhr.send();
+    }
 
   });
 
 
 
   // Ready
-  player.addListener('ready', ({ device_id }) => {
+  player.addListener('ready', ({ device_id, current_track }) => {
     console.log('Ready with Device ID', device_id);
   });
 
@@ -97,7 +102,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
       player.getCurrentState().then(state => {
         let time = state.position;
       });
-      console.log(time);
     });
   });
   $("#connect").click(function() {
