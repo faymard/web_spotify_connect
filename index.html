@@ -16,7 +16,7 @@
 <body style="background-color: SlateGrey">
   <button id="connect" type="button" class="btn btn-outline-success" onclick="window.location.href = 'spotify/connect';">Connect to Web API</button>
 
-  <div class="row" id="currentTrack" width="100%">
+  <div class="row px-2" id="currentTrack" width="100%">
     <div class="col-sm-6 d-flex justify-content-center align-items-center" id="div_artist_track" style=float:none;>
       <span id="artist_track" class="text-center"> <b> <span id="artist"></span> </b> - <span id="track"></span> </span>
     </div>
@@ -29,11 +29,20 @@
 
 
   <div class="row fixed-bottom bg-dark" id="trackNav" width="100%">
-    <div class="col-sm-3 d-flex justify-content-center align-items-center px-3" id="div_playpause" style=float:none;>
-      <button type="button" class="btn text-white" id="playpause">Play/pause</button>
+    <div class="col-sm-2 d-flex justify-content-center align-items-center" id="div_playpause" style=float:none;>
+      <button type="button" class="btn" id="playpause">
+        <span class="text-secondary" id="play">play </span>
+        <span class="text-secondary" id="pause">pause</span>
+      </button>
     </div>
-    <div class="col-sm-9 d-flex justify-content-center align-items-center px-5" id="div_volume">
-      <input type="range" class="custom-range w-100" id="volume" min=0 max=100/>
+    <div class="col-sm-1 d-flex justify-content-center align-items-center" id="div_currentTime" style=float:none;>
+      <span class="text-white" id="currentTime">0:00</span>
+    </div>
+    <div class="col-sm-8 d-flex justify-content-center align-items-center" id="div_time">
+      <input type="range" class="custom-range w-100" id="time" min=0 max=0 value=0/>
+    </div>
+    <div class="col-sm-1 d-flex justify-content-center align-items-center" id="div_trackDuration" style=float:none;>
+      <span class="text-white" id="trackDuration">0:00</span>
     </div>
   </div>
 

@@ -4,12 +4,43 @@ var refresh_token = "";
 var xhr = new XMLHttpRequest();
 var currentId = "";
 
+var trackDuration = 0;
+var currentTimeInTrack = 0;
+var timeoutVar;
+
+var playState = false; // false if paused, true if currently playing
+
+function msTimeProcessor(msTime) {
+  let ret = "";
+  ret += Math.floor(msTime/60000) + ":";
+  if(Math.floor((msTime%60000)/1000) < 10) {
+    ret += "0";
+  }
+  ret +=  Math.floor((msTime%60000)/1000);
+  return ret;
+}
+
+function updateTimeRange() {
+  currentTimeInTrack++;
+  console.log(currentTimeInTrack);
+  $('#time').val(currentTimeInTrack);
+  $("#currentTime").text(msTimeProcessor(currentTimeInTrack));
+}
+
 function changeAttributes(e) {
   if (xhr.readyState == 4 && xhr.status == 200) {
     var response = JSON.parse(xhr.responseText);
     $("#art_img").attr('src', response.album.images[0].url);
 
-    console.log("artwork updated");
+    trackDuration = response.duration_ms;
+    console.log(trackDuration);
+    $("#currentTime").text("0:00");
+    $("#trackDuration").text(msTimeProcessor(trackDuration));
+    //$("#trackDuration").text(Math.floor(trackDuration/60000) + ":" + Math.floor((trackDuration%60000)/1000));
+    $("#time").attr("max", trackDuration);
+    $("#time").val(0);
+
+    console.log("attributes updated");
   }
 }
 
@@ -56,7 +87,17 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   player.addListener('playback_error', ({ message }) => { console.error(message); });
 
   // Playback status updates
-  player.addListener('player_state_changed', ({track_window, track_window: {current_track}}) => {
+  player.addListener('player_state_changed', ({paused, track_window, track_window: {current_track}}) => {
+
+    if(paused && playState) {
+      console.log("stop")
+      clearInterval(timeoutVar);
+      playState = false;
+    } else if (!paused && !playState) {
+      console.log("start")
+      timeoutVar = setInterval(updateTimeRange, 1000);
+      playState = true;
+    }
 
     if(currentId !== current_track.id) {
       currentId = current_track.id;
@@ -66,6 +107,8 @@ window.onSpotifyWebPlaybackSDKReady = () => {
       xhr.setRequestHeader("Authorization", "Bearer "  + access_token);
       xhr.send();
     }
+
+
 
   });
 
@@ -92,8 +135,13 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   $(document).ready(function(){
   });
 
-  $( "#volume" ).on("change", function(event) {
-    player.setVolume(event.target.value/100.0);
+  $( "#time" ).on("change", function(event) {
+    currentTimeInTrack = $(this).val();
+    player.seek(currentTimeInTrack).then(() => {
+      //$("#currentTime").text(Math.floor(currentTimeInTrack/60000) + ":" + Math.floor((currentTimeInTrack%60000)/1000));
+      $("#currentTime").text(msTimeProcessor(currentTimeInTrack));
+      console.log('Changed at position ' + currentTimeInTrack);
+    });
   });
 
   $("#playpause").click(function(){
@@ -106,7 +154,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   });
   $("#connect").click(function() {
     console.log("Requested connection");
-  })
+  });
 
 
 
