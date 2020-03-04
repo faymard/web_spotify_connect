@@ -13,9 +13,9 @@ var tokenReceived = false;
 var tokenRequested = false;
 
 wss.on('connection', function connection(wsi) {
-  console.log("clients : " + wss.clients.size);
+
   wsi.on('message', function incoming(data) {
-    console.log(data);
+
     wss.clients.forEach(function each(client) {
       if(client === wsi && data === "token" && tokenReceived) {
         var ans = JSON.stringify({
@@ -124,7 +124,6 @@ var server = http.createServer(function (req, resp) {
                 resp.writeHead(200, {'Content-Type': 'text/javascript'});
                 resp.write(data);
                 resp.end();
-                console.log("ended 3");
             }
 
         });
@@ -138,7 +137,6 @@ var server = http.createServer(function (req, resp) {
                 resp.writeHead(200, {'Content-Type': 'text/css'});
                 resp.write(data);
                 resp.end();
-                console.log("ended 4");
             }
 
         });
@@ -148,7 +146,6 @@ var server = http.createServer(function (req, resp) {
           resp.writeHead(200, { 'Content-Type': 'text/html' });
           resp.write("URL unknown");
           resp.end();
-          console.log("ended 5");
       }
 });
 //5.

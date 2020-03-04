@@ -21,7 +21,7 @@ function msTimeProcessor(msTime) {
 }
 
 function updateTimeRange() {
-  currentTimeInTrack++;
+  currentTimeInTrack += 1000;
   console.log(currentTimeInTrack);
   $('#time').val(currentTimeInTrack);
   $("#currentTime").text(msTimeProcessor(currentTimeInTrack));
@@ -92,10 +92,14 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     if(paused && playState) {
       console.log("stop")
       clearInterval(timeoutVar);
+      $("#play").attr("class", "text-secondary");
+      $("#pause").attr("class", "text-white");
       playState = false;
     } else if (!paused && !playState) {
       console.log("start")
       timeoutVar = setInterval(updateTimeRange, 1000);
+      $("#play").attr("class", "text-white");
+      $("#pause").attr("class", "text-secondary");
       playState = true;
     }
 
@@ -136,7 +140,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   });
 
   $( "#time" ).on("change", function(event) {
-    currentTimeInTrack = $(this).val();
+    currentTimeInTrack = parseInt($(this).val(), 10);
     player.seek(currentTimeInTrack).then(() => {
       //$("#currentTime").text(Math.floor(currentTimeInTrack/60000) + ":" + Math.floor((currentTimeInTrack%60000)/1000));
       $("#currentTime").text(msTimeProcessor(currentTimeInTrack));
