@@ -8,6 +8,7 @@
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   <script src="./index.js"></script>
   <title>SpotiWeb</title>
@@ -15,29 +16,46 @@
 <body style="background-color: SlateGrey">
   <button id="connect" type="button" class="btn btn-outline-success" onclick="window.location.href = 'spotify/connect';">Connect to Web API</button>
 
-  <div class="row px-2" id="currentTrack" width="100%">
+  <div class="row px-2 d-flex justify-content-center align-items-center container-fluid" id="currentTrack">
     <div class="col-sm-6 d-flex justify-content-center align-items-center" id="div_artist_track" style=float:none;>
       <span id="artist_track" class="text-center"> <b> <span id="artist"></span> </b> - <span id="track"></span> </span>
     </div>
     <div class="col-sm-6 d-flex justify-content-center align-items-center" id="div_art">
       <span id="art">
-        <img id="art_img" src="" alt="" width="100%">
+        <img id="art_img" class="img-fluid" src="" alt="">
       </span>
     </div>
   </div>
 
 
   <div class="row fixed-bottom bg-dark" id="trackNav" width="100%">
-    <div class="col-sm-2 d-flex justify-content-center align-items-center" id="div_playpause" style=float:none;>
-      <button type="button" class="btn" id="playpause">
-        <span class="text-secondary" id="play">play </span>
-        <span class="text-secondary" id="pause">pause</span>
-      </button>
+    <div class="col-sm-2 d-flex justify-content-center align-items-center text-white" id="div_dropuplist">
+      <!-- Default dropup button -->
+      <div class="btn-group dropup" width="100%">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropup
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">element 1</a>
+          <a class="dropdown-item" href="#">element 2</a>
+        </div>
+      </div>
     </div>
+    <div class="col-sm-2 d-flex justify-content-center align-items-center" id="div_playpause" style=float:none;>
+      <div class="button-group">
+        <button class="btn" id="playpause">
+          <span class="text-secondary" id="play">play </span>
+          <span class="text-secondary" id="pause">pause</span>
+        </button>
+        <button class="btn text-secondary" id="previous">previous</button>
+        <button class="btn text-secondary" id="next">next</button>
+      </div>
+    </div>
+
     <div class="col-sm-1 d-flex justify-content-center align-items-center" id="div_currentTime" style=float:none;>
       <span class="text-white" id="currentTime">0:00</span>
     </div>
-    <div class="col-sm-8 d-flex justify-content-center align-items-center" id="div_time">
+    <div class="col-sm-6 d-flex justify-content-center align-items-center" id="div_time">
       <input type="range" class="custom-range w-100" id="time" min=0 max=0 value=0/>
     </div>
     <div class="col-sm-1 d-flex justify-content-center align-items-center" id="div_trackDuration" style=float:none;>
