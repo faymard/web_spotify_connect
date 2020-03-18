@@ -1,6 +1,8 @@
 # web_spotify_connect
 Spotify Connect receiver app. Use a valid Spotify Premium account or it won't work.
 
+Requires NodeJS + npm.
+
 # Setup
 First, install all packages required (package.json has them all) with npm.
 
@@ -17,8 +19,14 @@ There you go !
 
 # Current features
 Connect to the app via any Spotify client (PC, Android, iOS should work too but not tested yet). Music will then be played from the web page (be sure to enable sound output in your browser, some disable it by default).
+
 Playback can be controlled from the app (play/pause, seek).
 
 # Planned upgrade
+Navigate through player queue and add/remove tracks from it.
+
+Login to Spotify headlessly to use the app on an embedded client (e.g. a Raspberry Pi with no input device)
+
 Explore user's library and use the app as a standalone client using Spotify Web API.
+
 Search through Spotify's catalog.
