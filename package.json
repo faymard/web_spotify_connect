@@ -10,6 +10,6 @@
   "description": "",
   "dependencies": {
     "request": "^2.88.2",
-    "ws": "^7.2.1"
+    "ws": "^7.4.6"
   }
 }
